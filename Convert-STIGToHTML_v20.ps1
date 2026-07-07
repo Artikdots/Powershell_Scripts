@@ -1282,7 +1282,7 @@ foreach ($checklist in $allChecklists) {
                             <div class="expanded-content" id="open-$checklistIndex">
 "@
         
-        $openVulns = $checklist.Vulns | Where-Object { $_.Status -eq "Open" } | Sort-Object `
+        $openVulns = $checklist.Vulns | Where-Object { $_.Status -eq "Open" } | Sort-Object -Property @(
             @{Expression = {
                 switch ($_.Severity) {
                     "high" { 1 }
@@ -1290,8 +1290,9 @@ foreach ($checklist in $allChecklists) {
                     "low" { 3 }
                     default { 4 }
                 }
-            }}, `
+            }},
             @{Expression = { $_.VulnID }}
+        )
         
         foreach ($vuln in $openVulns) {
             $findingId = "open-$($checklist.HostName)-$($vuln.VulnID)" -replace '\s','-'
@@ -1799,7 +1800,7 @@ foreach ($key in $uniqueFindings.Keys) {
 
 $stigGroupIndex = 0
 foreach ($stigTitle in ($stigGroups.Keys | Sort-Object)) {
-    $findings = $stigGroups[$stigTitle] | Sort-Object `
+    $findings = $stigGroups[$stigTitle] | Sort-Object -Property @(
         @{Expression = {
             switch ($_.Severity) {
                 "high" { 1 }
@@ -1807,15 +1808,16 @@ foreach ($stigTitle in ($stigGroups.Keys | Sort-Object)) {
                 "low" { 3 }
                 default { 4 }
             }
-        }}, `
+        }},
         @{Expression = {
             switch ($_.Status) {
                 "Open" { 0 }
                 "Not_Reviewed" { 1 }
                 default { 2 }
             }
-        }}, `
+        }},
         @{Expression = { $_.VulnID }}
+    )
     
     $html += @"
         <div class="collapsible-section">
